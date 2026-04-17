@@ -58,8 +58,12 @@ El sistema espera preguntas escritas en lenguaje natural por parte del usuario.
 Tipos de solicitudes contempladas hoy:
 
 - Preguntas que requieren operaciones matemáticas sencillas.
-- Preguntas sobre la hora actual.
-- Preguntas mixtas que combinan ambos tipos.
+- Preguntas sobre la fecha y hora actuales.
+- Preguntas mixtas que combinan los tipos anteriores.
+- Preguntas sobre costos y disponibilidad de vuelos (dominio de viajes), por ejemplo:
+  - "¿Cuánto saldría un viaje a Japón desde Bogotá en diciembre?"
+  - "¿Me alcanzan USD 800 para ir a Madrid ida y vuelta la próxima semana?"
+  - "¿Cuál es el vuelo más barato a Tokio esta temporada?"
 
 Resultado esperado para el usuario:
 

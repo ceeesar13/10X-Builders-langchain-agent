@@ -163,6 +163,40 @@ Este plan traduce el brief en pasos ejecutables para que cualquier integrante de
 
 ---
 
+## Fase 6: Extensión al dominio de viajes (integración con API de vuelos)
+
+**Objetivo:** permitir que el agente responda preguntas reales sobre viajes usando una API externa, manteniendo la arquitectura por capas y el enfoque didáctico.
+
+**Decisión de diseño clave:**
+
+- Separar **tool** (contrato con el agente, vive en `src/agent/tools/`) del **provider** (cliente HTTP con la API externa, vive en `src/agent/providers/`). Esto permite cambiar de proveedor (Amadeus → Duffel → Kiwi) sin tocar el prompt ni el agente.
+
+**Actividades:**
+
+1. Definir el contrato de la tool (input/output humanos) antes de elegir proveedor.
+2. Elegir proveedor con tradeoffs: Amadeus Self-Service (elegido: free tier, datos reales, OAuth2 estándar).
+3. Implementar provider con OAuth2 y caché de token.
+4. Implementar tool `flight_search` que normaliza la respuesta a los campos mínimos (precio, aerolíneas, escalas, duración, fechas).
+5. Actualizar prompt para que el agente sepa: (a) convertir ciudades a códigos IATA, (b) encadenar `flight_search` + `calculator` cuando haya presupuesto, (c) consultar `current_time` cuando la fecha sea relativa.
+6. Tests unitarios con cliente Amadeus inyectado vía DI (sin pegarle a la red).
+7. Documentar contrato de tool en `docs/flight-tool-contract.md`.
+
+**Entregables:**
+
+- `src/agent/providers/amadeus.ts` — cliente HTTP con OAuth2 y caché de token.
+- `src/agent/tools/flightSearch.ts` — tool LangChain con schema zod y factory para DI.
+- `tests/flightSearch.test.ts` — tests con cliente mock.
+- `docs/flight-tool-contract.md` — contrato funcional de la tool.
+- Prompt actualizado con reglas de razonamiento sobre vuelos.
+
+**Criterio de salida:**
+
+- El agente resuelve preguntas como "¿cuánto sale un viaje a Tokio desde Bogotá en diciembre?" encadenando tools.
+- Los tests pasan sin credenciales reales (gracias a DI).
+- El entregable queda listo para extenderse a otros proveedores sin reescribir la tool.
+
+---
+
 ## Fase 5: Documentación final y handoff
 
 **Objetivo:** dejar el proyecto listo para continuidad por cualquier miembro del equipo.
